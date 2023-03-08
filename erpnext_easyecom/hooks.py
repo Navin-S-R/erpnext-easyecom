@@ -199,3 +199,4 @@ app_license = "MIT"
 # auth_hooks = [
 #	"erpnext_easyecom.auth.validate"
 # ]
+ 
