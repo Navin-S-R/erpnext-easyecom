@@ -115,7 +115,6 @@ def get_masters(url,email,password,jwt_token):
 					next_url=payload.get('nextUrl')
 					while(next_url!=None):
 						next_url,data=fetch_data_from_next_url(next_url,email,password,jwt_token)
-						print(len(data))
 						if data:
 							response_data+=data
 				normal_product_count=0
@@ -141,21 +140,23 @@ def get_masters(url,email,password,jwt_token):
 			payload = response.json()
 			if type(payload.get('data')) is list:
 				response_data=payload.get('data')
-				print('12345')
 				if payload.get('nextUrl'):
 					next_url=payload.get('nextUrl')
 					while(next_url!=None):
 						next_url,data=fetch_data_from_next_url(next_url,email,password,jwt_token)
 						if data:
 							response_data+=data
-				supplier_count=0
+				supplier_count = 0
+				synced_count = 0
 				if response_data:
 					for row in response_data:
-						supplier_count+=1
+						supplier_count += 1
+						create_supplier(row)
+						synced_count += 1
 					master_details.append({
 						"master":"Supplier",
 						"available_items":supplier_count,
-						"synced_items": 0
+						"synced_items": synced_count
 					})
 		else:
 			msg+='Got unexpected response on master Supplier \n'
@@ -176,14 +177,17 @@ def get_masters(url,email,password,jwt_token):
 						next_url,data=fetch_data_from_next_url(next_url,email,password,jwt_token)
 						if data:
 							response_data+=data
-				customer_count=0
+				customer_count = 0
+				synced_count = 0
 				if response_data:
 					for row in response_data:
-						customer_count+=1
+						customer_count += 1
+						n = create_customer(row)
+						synced_count += n
 					master_details.append({
 						"master":"Customer",
 						"available_items":customer_count,
-						"synced_items": 0
+						"synced_items": synced_count
 					})
 		if msg:
 			return {"master_details":master_details,"msg":msg}
@@ -214,3 +218,84 @@ def fetch_data_from_next_url(next_url,email,password,jwt_token):
 			return None, []
 	else:
 		return None, []
+	
+
+def create_supplier(supplier_data):
+	if not frappe.db.exists("Supplier",supplier_data['vendor_name']):
+		new_supplier = frappe.get_doc({
+		'doctype' : "Supplier",
+		'supplier_name' : supplier_data['vendor_name'],
+		'supplier_group' : "All Supplier Groups",
+		'vendor_id' : supplier_data['vendor_c_id']
+		}).insert()
+		billing_address=supplier_data.get('address').get('billing')
+		if billing_address:
+			bill_addr = frappe.get_doc(
+			{
+			'doctype' : "Address",
+			"address_line1" : billing_address['address'],
+			"city" : billing_address['city'],
+			"state" : billing_address['state_name'],
+			"pincode" : billing_address['zip'],
+			"links":[{
+				"link_doctype" : "Supplier",
+				"link_name" : new_supplier.name
+			}]
+			}).insert()
+		dispatch_address=supplier_data.get('address').get('dispatch')
+		if dispatch_address:
+			dispatch_addr = frappe.get_doc(
+			{
+			'doctype' : "Address",
+			'address_type' : "Shipping",
+			'address_line1' : dispatch_address['address'],
+			'city' : dispatch_address['city'],
+			'state' : dispatch_address['state_name'],
+			'pincode' : dispatch_address['zip'],
+			'links':[
+			{
+				"link_doctype" : "Supplier",
+				"link_name" : new_supplier.name
+			}]
+			}).insert()
+	return 1
+
+def create_customer(customer_data):
+	if not frappe.db.exists("Customer",customer_data['companyname']):
+		new_customer = frappe.get_doc({
+		'doctype' : "Customer",
+		'customer_name' : customer_data['companyname'],
+		'customer_type' : "Company",
+		'tax_id' : customer_data['gstNum'],
+		'territory' : 'All Territories',
+		'customer_group' : 'Commercial'
+		}).insert()
+		bill_addr = frappe.get_doc(
+		{
+		'doctype' : "Address",
+		"address_line1" : customer_data["billingStreet"],
+		"city" : customer_data['billingCity'],
+		"country" : customer_data['billingCountry'],
+		"state" : customer_data['billingState'],
+		"pincode" : customer_data['billingZipcode'],
+		"links":[{
+			"link_doctype" : "Customer",
+			"link_name" : new_customer.name
+		}]
+		}).insert()
+		dispatch_addr = frappe.get_doc(
+		{
+		'doctype' : "Address",
+		'address_type' : "Shipping",
+		'address_line1' : customer_data['dispatchStreet'],
+		'city' : customer_data['dispatchCity'],
+		"country" : customer_data['dispatchCountry'],
+		'state' : customer_data['dispatchState'],
+		'pincode' : customer_data['dispatchZipcode'],
+		'links':[
+		{
+			"link_doctype" : "Customer",
+			"link_name" : new_customer.name
+		}]
+		}).insert()
+	return 1
