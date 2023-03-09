@@ -282,7 +282,7 @@ def create_item_details(row):
 					'brand':row.get('brand') or 'Unknown'
 				}).insert()
 			easyecom_item.erp_item_code=erp_item.name
-			easyecom_item.erp_item_code_link=get_link_to_form('Easy Ecom Item',erp_item.name)
+			easyecom_item.erp_item_code_link=get_link_to_form('Item',erp_item.name)
 			easyecom_item.save()
 		return True
 	except:
