@@ -1,6 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "field:cp_id",
  "creation": "2023-03-09 11:24:39.309177",
  "default_view": "List",
  "doctype": "DocType",
@@ -8,6 +9,8 @@
  "engine": "InnoDB",
  "field_order": [
   "cp_id",
+  "erp_item_code",
+  "erp_item_code_link",
   "product_id",
   "sku",
   "product_name",
@@ -44,7 +47,8 @@
   {
    "fieldname": "cp_id",
    "fieldtype": "Data",
-   "label": "Cp ID"
+   "label": "Cp ID",
+   "unique": 1
   },
   {
    "fieldname": "product_id",
@@ -63,7 +67,7 @@
   },
   {
    "fieldname": "description",
-   "fieldtype": "Data",
+   "fieldtype": "Small Text",
    "label": "Description"
   },
   {
@@ -195,21 +199,34 @@
   },
   {
    "fieldname": "product_image_url",
-   "fieldtype": "Data",
+   "fieldtype": "Small Text",
    "label": "Product Image URL"
   },
   {
    "fieldname": "cp_inventory",
    "fieldtype": "Float",
    "label": "CP Inventory"
+  },
+  {
+   "fieldname": "erp_item_code",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Erp Item Code"
+  },
+  {
+   "fieldname": "erp_item_code_link",
+   "fieldtype": "Small Text",
+   "label": "Erp Item Code Link",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-03-09 11:45:10.151126",
+ "modified": "2023-03-09 15:11:47.664120",
  "modified_by": "Administrator",
  "module": "Erpnext Easyecom",
  "name": "Easy Ecom Item",
+ "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [
   {

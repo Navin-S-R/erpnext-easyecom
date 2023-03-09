@@ -6,6 +6,7 @@ import frappe
 from frappe.model.document import Document
 from bs4 import BeautifulSoup
 from frappe import _
+from frappe.utils import get_link_to_form
 
 class EasyEcomIntegration(Document):
 	pass
@@ -115,18 +116,21 @@ def get_masters(url,email,password,jwt_token):
 					next_url=payload.get('nextUrl')
 					while(next_url!=None):
 						next_url,data=fetch_data_from_next_url(next_url,email,password,jwt_token)
-						print(len(data))
 						if data:
 							response_data+=data
 				normal_product_count=0
+				synced_item=0
 				if response_data:
 					for row in response_data:
 						if row.get('product_type')=='normal_product':
 							normal_product_count+=1
+							create_item=create_item_details(row)
+							synced_item+=1 if create_item else 0
+
 					master_details.append({
 						"master":"Items",
 						"available_items":normal_product_count,
-						"synced_items": 0
+						"synced_items": synced_item
 					})
 		else:
 			msg+='Got unexpected response on master Items \n'
@@ -141,7 +145,6 @@ def get_masters(url,email,password,jwt_token):
 			payload = response.json()
 			if type(payload.get('data')) is list:
 				response_data=payload.get('data')
-				print('12345')
 				if payload.get('nextUrl'):
 					next_url=payload.get('nextUrl')
 					while(next_url!=None):
@@ -214,3 +217,67 @@ def fetch_data_from_next_url(next_url,email,password,jwt_token):
 			return None, []
 	else:
 		return None, []
+
+####Create Easy Ecom Item and Erp item
+def create_item_details(row):
+	try:
+		if not frappe.db.exists("Easy Ecom Item",str(row.get('cp_id'))):
+			easyecom_item=frappe.get_doc({
+					'doctype': 'Easy Ecom Item',
+					'cp_id': str(row.get('cp_id')),
+					'product_id': row.get('product_id'),
+					'sku':row.get('sku'),
+					'product_name': row.get('product_name'),
+					'description':row.get('description'),
+					'active':row.get('active'),
+					'inventory':row.get('inventory'),
+					'product_type':row.get('product_type'),
+					'brand':row.get('brand'),
+					'colour':row.get('colour'),
+					'category_id':row.get('category_id'),
+					'brand_id':row.get('brand_id'),
+					'accounting_sku':row.get('accounting_sku'),
+					'accounting_unit':row.get('accounting_unit'),
+					'category_name':row.get('category_name'),
+					'expiry_type':row.get('expiry_type'),
+					'company_name':row.get('company_name'),
+					'c_id':row.get('c_id'),
+					'height':row.get('height'),
+					'width':row.get('width'),
+					'length':row.get('length'),
+					'weight':row.get('weight'),
+					'cost':row.get('cost'),
+					'mrp':row.get('mrp'),
+					'size':row.get('size'),
+					'cp_sub_products_count':row.get('cp_sub_products_count'),
+					'model_no':row.get('model_no'),
+					'hsn_code':row.get('hsn_code'),
+					'tax_rate':row.get('tax_rate'),
+					'product_shelf_life':row.get('product_shelf_life'),
+					'product_image_url':row.get('product_image_url'),
+					'cp_inventory':row.get('cp_inventory')
+				}).insert()
+			
+			if not frappe.db.exists("Item",{'easy_ecom_item':str(row.get('cp_id'))}):
+				if row.get('brand') and not frappe.db.exists("Brand",{'name':row.get('brand')}):
+					frappe.get_doc({
+						'doctype':'Brand',
+						'brand':row.get('brand')
+					}).insert()
+				erp_item=frappe.get_doc({
+					'doctype': 'Item',
+					'easy_ecom_item':str(row.get('cp_id')),
+					'item_code':str(row.get('cp_id')),
+					'item_name':str(row.get('product_name'))+str(row.get('model_no')),
+					'item_group':'All Item Groups',
+					'stock_uom':'Nos',
+					'disabled': 0 if row.get('active') else 1,
+					'description':row.get('description'),
+					'brand':row.get('brand') or 'Unknown'
+				}).insert()
+			easyecom_item.erp_item_code=erp_item.name
+			easyecom_item.erp_item_code_link=get_link_to_form('Easy Ecom Item',erp_item.name)
+			easyecom_item.save()
+		return True
+	except:
+		return False
