@@ -74,6 +74,7 @@ frappe.ui.form.on('Easy Ecom Integration', {
 							password:frm.doc.password,
 							jwt_token:frm.doc.jwt_token
 						},
+						freeze: true,
 						callback: function (r) {
 							if(r.message) {
 								if(r.message["master_details"]){

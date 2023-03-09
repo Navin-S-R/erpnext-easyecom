@@ -1,0 +1,232 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2023-03-09 11:24:39.309177",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "cp_id",
+  "product_id",
+  "sku",
+  "product_name",
+  "description",
+  "active",
+  "inventory",
+  "product_type",
+  "brand",
+  "colour",
+  "category_id",
+  "brand_id",
+  "accounting_sku",
+  "accounting_unit",
+  "category_name",
+  "expiry_type",
+  "company_name",
+  "c_id",
+  "height",
+  "length",
+  "width",
+  "weight",
+  "cost",
+  "mrp",
+  "size",
+  "cp_sub_products_count",
+  "model_no",
+  "hsn_code",
+  "tax_rate",
+  "product_shelf_life",
+  "product_image_url",
+  "cp_inventory"
+ ],
+ "fields": [
+  {
+   "fieldname": "cp_id",
+   "fieldtype": "Data",
+   "label": "Cp ID"
+  },
+  {
+   "fieldname": "product_id",
+   "fieldtype": "Data",
+   "label": "Product ID"
+  },
+  {
+   "fieldname": "sku",
+   "fieldtype": "Data",
+   "label": "SKU"
+  },
+  {
+   "fieldname": "product_name",
+   "fieldtype": "Data",
+   "label": "Product Name"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Data",
+   "label": "Description"
+  },
+  {
+   "default": "0",
+   "fieldname": "active",
+   "fieldtype": "Check",
+   "label": "Active"
+  },
+  {
+   "fieldname": "inventory",
+   "fieldtype": "Float",
+   "label": "Inventory"
+  },
+  {
+   "fieldname": "product_type",
+   "fieldtype": "Data",
+   "label": "Product Type"
+  },
+  {
+   "fieldname": "brand",
+   "fieldtype": "Data",
+   "label": "Brand"
+  },
+  {
+   "fieldname": "colour",
+   "fieldtype": "Data",
+   "label": "Colour"
+  },
+  {
+   "fieldname": "category_id",
+   "fieldtype": "Data",
+   "label": "Category ID"
+  },
+  {
+   "fieldname": "brand_id",
+   "fieldtype": "Data",
+   "label": "Brand ID"
+  },
+  {
+   "fieldname": "accounting_sku",
+   "fieldtype": "Data",
+   "label": "Accounting SKU"
+  },
+  {
+   "fieldname": "accounting_unit",
+   "fieldtype": "Data",
+   "label": "Accounting Unit"
+  },
+  {
+   "fieldname": "category_name",
+   "fieldtype": "Data",
+   "label": "Category Name"
+  },
+  {
+   "default": "0",
+   "fieldname": "expiry_type",
+   "fieldtype": "Check",
+   "label": "Expiry Type"
+  },
+  {
+   "fieldname": "company_name",
+   "fieldtype": "Data",
+   "label": "Company Name"
+  },
+  {
+   "fieldname": "c_id",
+   "fieldtype": "Data",
+   "label": "C ID"
+  },
+  {
+   "fieldname": "height",
+   "fieldtype": "Float",
+   "label": "Height"
+  },
+  {
+   "fieldname": "length",
+   "fieldtype": "Float",
+   "label": "Length"
+  },
+  {
+   "fieldname": "width",
+   "fieldtype": "Float",
+   "label": "Width"
+  },
+  {
+   "fieldname": "weight",
+   "fieldtype": "Float",
+   "label": "Weight"
+  },
+  {
+   "fieldname": "cost",
+   "fieldtype": "Currency",
+   "label": "Cost"
+  },
+  {
+   "fieldname": "mrp",
+   "fieldtype": "Currency",
+   "label": "MRP"
+  },
+  {
+   "fieldname": "size",
+   "fieldtype": "Float",
+   "label": "Size"
+  },
+  {
+   "fieldname": "cp_sub_products_count",
+   "fieldtype": "Int",
+   "label": "CP Sub Products Count"
+  },
+  {
+   "fieldname": "model_no",
+   "fieldtype": "Data",
+   "label": "Model No"
+  },
+  {
+   "fieldname": "hsn_code",
+   "fieldtype": "Data",
+   "label": "HSN Code"
+  },
+  {
+   "fieldname": "tax_rate",
+   "fieldtype": "Float",
+   "label": "Tax Rate"
+  },
+  {
+   "fieldname": "product_shelf_life",
+   "fieldtype": "Data",
+   "label": "Product Shelf Life"
+  },
+  {
+   "fieldname": "product_image_url",
+   "fieldtype": "Data",
+   "label": "Product Image URL"
+  },
+  {
+   "fieldname": "cp_inventory",
+   "fieldtype": "Float",
+   "label": "CP Inventory"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2023-03-09 11:45:10.151126",
+ "modified_by": "Administrator",
+ "module": "Erpnext Easyecom",
+ "name": "Easy Ecom Item",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
