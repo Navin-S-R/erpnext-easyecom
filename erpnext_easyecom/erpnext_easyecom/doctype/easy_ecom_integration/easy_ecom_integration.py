@@ -114,7 +114,8 @@ def get_masters(url,email,password,jwt_token):
 				if payload.get('nextUrl'):
 					next_url=payload.get('nextUrl')
 					while(next_url!=None):
-						next_url,data=fetch_item_from_next_url(next_url,email,password,jwt_token)
+						next_url,data=fetch_data_from_next_url(next_url,email,password,jwt_token)
+						print(len(data))
 						if data:
 							response_data+=data
 				normal_product_count=0
@@ -140,6 +141,13 @@ def get_masters(url,email,password,jwt_token):
 			payload = response.json()
 			if type(payload.get('data')) is list:
 				response_data=payload.get('data')
+				print('12345')
+				if payload.get('nextUrl'):
+					next_url=payload.get('nextUrl')
+					while(next_url!=None):
+						next_url,data=fetch_data_from_next_url(next_url,email,password,jwt_token)
+						if data:
+							response_data+=data
 				supplier_count=0
 				if response_data:
 					for row in response_data:
@@ -162,6 +170,12 @@ def get_masters(url,email,password,jwt_token):
 			payload = response.json()
 			if type(payload.get('data')) is list:
 				response_data=payload.get('data')
+				if payload.get('nextUrl'):
+					next_url=payload.get('nextUrl')
+					while(next_url!=None):
+						next_url,data=fetch_data_from_next_url(next_url,email,password,jwt_token)
+						if data:
+							response_data+=data
 				customer_count=0
 				if response_data:
 					for row in response_data:
@@ -180,7 +194,7 @@ def get_masters(url,email,password,jwt_token):
 		frappe.throw("please save the document")
 
 ##Fetch Item	
-def fetch_item_from_next_url(next_url,email,password,jwt_token):
+def fetch_data_from_next_url(next_url,email,password,jwt_token):
 	url = "https://api.easyecom.io"+next_url
 	headers = {"Authorization":jwt_token}
 	response = requests.get(
