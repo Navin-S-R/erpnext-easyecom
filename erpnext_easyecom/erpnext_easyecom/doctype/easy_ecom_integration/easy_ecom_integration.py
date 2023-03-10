@@ -118,19 +118,36 @@ def get_masters(url,email,password,jwt_token):
 						next_url,data=fetch_data_from_next_url(next_url,email,password,jwt_token)
 						if data:
 							response_data+=data
-				normal_product_count=0
-				synced_item=0
+				normal_product_count = 0
+				synced_item = 0
+				child_product_count = 0
+				child_synced_item = 0
+				total_item = 0
 				if response_data:
 					for row in response_data:
+						total_item += 1
+						frappe.publish_realtime("progress",{"percent": (total_item/len(response_data)*100), 
+							"title": "Creating Item Masters",
+							"description": row.get('product_name'),
+							},user=frappe.session.user)
 						if row.get('product_type')=='normal_product':
 							normal_product_count+=1
 							create_item=create_item_details(row)
 							synced_item+=1 if create_item else 0
+						elif row.get('product_type') == 'child_product':
+							child_product_count+=1
+							create_item=create_item_details(row)
+							child_synced_item+=1 if create_item else 0
 
 					master_details.append({
-						"master":"Items",
+						"master":"Items - Normal Product",
 						"available_items":normal_product_count,
 						"synced_items": synced_item
+					})
+					master_details.append({
+						"master":"Items - Child Product",
+						"available_items":child_product_count,
+						"synced_items": child_synced_item
 					})
 		else:
 			msg+='Got unexpected response on master Items \n'
@@ -155,6 +172,10 @@ def get_masters(url,email,password,jwt_token):
 				synced_count = 0
 				if response_data:
 					for row in response_data:
+						frappe.publish_realtime("progress",{"percent": (synced_item/len(response_data)*100), 
+											"title": "Creating Supplier Masters",
+											"description": row.get('vendor_name'),
+											},user=frappe.session.user)
 						supplier_count += 1
 						create_supplier(row)
 						synced_count += 1
@@ -186,6 +207,10 @@ def get_masters(url,email,password,jwt_token):
 				synced_count = 0
 				if response_data:
 					for row in response_data:
+						frappe.publish_realtime("progress",{"percent": (synced_item/len(response_data)*100), 
+											"title": "Creating Customer Masters",
+											"description": row.get('companyname'),
+											},user=frappe.session.user)
 						customer_count += 1
 						n = create_customer(row)
 						synced_count += n

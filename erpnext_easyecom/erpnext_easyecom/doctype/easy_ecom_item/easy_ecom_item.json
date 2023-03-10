@@ -27,6 +27,7 @@
   "category_name",
   "expiry_type",
   "company_name",
+  "column_break_82rue",
   "c_id",
   "height",
   "length",
@@ -218,11 +219,15 @@
    "fieldtype": "Small Text",
    "label": "Erp Item Code Link",
    "read_only": 1
+  },
+  {
+   "fieldname": "column_break_82rue",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-03-09 15:11:47.664120",
+ "modified": "2023-03-10 10:50:30.404897",
  "modified_by": "Administrator",
  "module": "Erpnext Easyecom",
  "name": "Easy Ecom Item",
