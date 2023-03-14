@@ -81,6 +81,7 @@ frappe.ui.form.on('Easy Ecom Integration', {
 							jwt_token:frm.doc.jwt_token
 						},
 						freeze: true,
+						freeze_message: "Fetching Masters. Please wait for few seconds...",
 						callback: function (r) {
 							if(r.message) {
 								if(r.message["master_details"]){
@@ -93,8 +94,18 @@ frappe.ui.form.on('Easy Ecom Integration', {
 								}
 								frm.refresh_field("master_details");
 								frm.save();
+								frappe.show_alert({
+									message: __("Masters Fetched and Synced Successfully."),
+									indicator: "green",
+								});
 								}
 							}
+							// else {
+							// 	frappe.show_alert({
+							// 		message: __(r.message["status"]),
+							// 		indicator: "red",
+							// 	});
+							// }
 						}
 					})
 				}).addClass("btn-primary").css({'color':'white','background-color': 'grey','font-weight': 'bold'});
