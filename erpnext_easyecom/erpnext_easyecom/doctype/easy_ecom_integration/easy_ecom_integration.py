@@ -7,6 +7,7 @@ from frappe.model.document import Document
 from bs4 import BeautifulSoup
 from frappe import _
 from frappe.utils import get_link_to_form
+from datetime import datetime, timedelta
 
 class EasyEcomIntegration(Document):
 	pass
@@ -26,9 +27,9 @@ def login_validation(url,email,password):
 			payload = response.json()
 			response_data=payload.get('data') or []
 			if type(response_data) is list:
-				return {"status":payload.get('message'),"jwt_token":None}
+				return {"status":payload.get('message'),"jwt_token":None,"api_token":None}
 			elif type(response_data) is dict:
-				return {"status":'Success',"jwt_token":payload.get('data').get('jwt_token') or None}
+				return {"status":'Success',"jwt_token":payload.get('data').get('jwt_token') or None,"api_token":payload.get('data').get('api_token') or None}
 		else:
 			error_content=response.__dict__
 			soup=BeautifulSoup(error_content.get('_content'),'html.parser')
@@ -46,7 +47,7 @@ def get_location(url,email,password,jwt_token):
 			login=True if login_validations.get('status') == 'Success' else False
 			if login==False:
 				frappe.throw(login_validations.get('status'))
-				    
+					
 		password=easyecom_integration_settings.get_password("password")
 		jwt_token=f"Bearer {easyecom_integration_settings.jwt_token}"
 		url = "https://api.easyecom.io/getAllLocation"
@@ -99,7 +100,7 @@ def get_masters(url,email,password,jwt_token):
 			login=True if login_validations.get('status') == 'Success' else False
 			if login==False:
 				frappe.throw(login_validations.get('status'))
-				    
+
 		password=easyecom_integration_settings.get_password("password")
 		jwt_token=f"Bearer {easyecom_integration_settings.jwt_token}"
 		url = "https://api.easyecom.io/Products/GetProductMaster"
@@ -377,3 +378,37 @@ def create_customer(customer_data):
 		return 1
 	except:
 		return 0
+	
+
+def get_all_orders(since=None, until=None):
+	orders, next_url = get_orders(since=since, until=until)
+	while next_url:
+		new_orders, next_url = get_orders(next_url=next_url,since=since, until=since)
+		orders += new_orders
+	return orders
+
+def get_orders(since=None, until=None, limit=250, next_url=None):
+	easyecom_integration_settings=frappe.get_single('Easy Ecom Integration')
+	ee_api_base_url = "https://api.easyecom.io"
+	api_token=easyecom_integration_settings.api_token
+	url = f"{ee_api_base_url}/orders/V2/getAllOrders?api_token={api_token}&start_date={since}&end_date={until}&limit={limit}"
+	print(url)
+	if next_url:
+		url = f"{ee_api_base_url}{next_url}"
+	else:
+		if not until:
+			until = datetime.combine(datetime.today(), datetime.min.time())
+		if not since:
+			since = until - timedelta(days=1)
+			until = until.isoformat().replace('T', ' ')
+			since = since.isoformat().replace('T', ' ')
+	headers = {
+		'Content-Type': 'application/json',
+	}
+	response = requests.get(url, headers=headers).json()
+	if response.get('code') == 200:
+		data = response.get('data')
+		if data is not list:
+			return data.get('orders'), data.get('nextUrl')
+		else:
+			return None, None

@@ -10,6 +10,7 @@
   "url",
   "section_break_hrkju",
   "username",
+  "api_token",
   "column_break_fjbtv",
   "password",
   "jwt_token",
@@ -82,12 +83,18 @@
    "fieldtype": "Table",
    "label": "Master Details",
    "options": "Easy Ecom Master Details"
+  },
+  {
+   "fieldname": "api_token",
+   "fieldtype": "Small Text",
+   "hidden": 1,
+   "label": "API Token"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-03-08 17:03:22.712479",
+ "modified": "2023-03-14 13:00:55.512144",
  "modified_by": "Administrator",
  "module": "Erpnext Easyecom",
  "name": "Easy Ecom Integration",

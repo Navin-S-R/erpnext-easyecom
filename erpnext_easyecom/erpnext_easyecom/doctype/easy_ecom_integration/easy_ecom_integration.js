@@ -16,8 +16,11 @@ frappe.ui.form.on('Easy Ecom Integration', {
 						callback: function (r) {
 							if(r.message) {
 								if(r.message["status"] == "Success"){
-									frappe.db.set_value("Easy Ecom Integration", frm.doc.name, "jwt_token", r.message["jwt_token"]);
+									frm.set_value("jwt_token", r.message["jwt_token"]);
+									frm.set_value("api_token", r.message["api_token"]);
 									frm.refresh_field("jwt_token");
+									frm.refresh_field("api_token");
+									frm.save()
 									frappe.show_alert({
 										message: __("Login Verified"),
 										indicator: "green",
@@ -25,8 +28,11 @@ frappe.ui.form.on('Easy Ecom Integration', {
 									
 								}
 								else if(r.message["status"] != "Success"){
-									frappe.db.set_value("Easy Ecom Integration", frm.doc.name, "jwt_token", r.message["jwt_token"]);
+									frm.set_value("jwt_token", r.message["jwt_token"]);
+									frm.set_value("api_token", r.message["api_token"]);
 									frm.refresh_field("jwt_token");
+									frm.refresh_field("api_token");
+									frm.save()
 									frappe.show_alert({
 										message: __(r.message["status"]),
 										indicator: "red",
